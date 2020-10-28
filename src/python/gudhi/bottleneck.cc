@@ -10,6 +10,8 @@
 
 #include <gudhi/Bottleneck.h>
 
+#include <pybind11/numpy.h>
+
 #include <pybind11_diagram_utils.h>
 
 // For compatibility with older versions, we want to support e=None.
@@ -53,3 +55,4 @@ PYBIND11_MODULE(bottleneck, m) {
     :returns: the bottleneck distance.
     )pbdoc");
 }
+    
