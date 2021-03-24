@@ -323,22 +323,15 @@ class BettiCurve(BaseEstimator, TransformerMixin):
         Returns:
             numpy array with shape (number of diagrams) x (**resolution**): output Betti curves.
         """
-        num_diag, Xfit = len(X), []
+        Xfit = []
         x_values = np.linspace(self.sample_range[0], self.sample_range[1], self.resolution)
         step_x = x_values[1] - x_values[0]
 
-        for i in range(num_diag):
-
-            diagram, num_pts_in_diag = X[i], X[i].shape[0]
-
+        for diagram in X:
+            diagram_int = np.clip(np.ceil((diagram[:,:2] - self.sample_range[0]) / step_x), 0, self.resolution).astype(int)
             bc =  np.zeros(self.resolution)
-            for j in range(num_pts_in_diag):
-                [px,py] = diagram[j,:2]
-                min_idx = np.clip(np.ceil((px - self.sample_range[0]) / step_x).astype(int), 0, self.resolution)
-                max_idx = np.clip(np.ceil((py - self.sample_range[0]) / step_x).astype(int), 0, self.resolution)
-                for k in range(min_idx, max_idx):
-                    bc[k] += 1
-
+            for interval in diagram_int:
+                bc[interval[0]:interval[1]] += 1
             Xfit.append(np.reshape(bc,[1,-1]))
 
         Xfit = np.concatenate(Xfit, 0)
@@ -612,18 +605,19 @@ class Atol(BaseEstimator, TransformerMixin):
     >>> b = np.array([[4, 2, 0], [4, 4, 0], [4, 0, 2]])
     >>> c = np.array([[3, 2, -1], [1, 2, -1]])
     >>> atol_vectoriser = Atol(quantiser=KMeans(n_clusters=2, random_state=202006))
-    >>> atol_vectoriser.fit(X=[a, b, c]).centers
-    array([[ 2.        ,  0.66666667,  3.33333333],
-           [ 2.6       ,  2.8       , -0.4       ]])
+    >>> atol_vectoriser.fit(X=[a, b, c]).centers # doctest: +SKIP
+    >>> # array([[ 2.        ,  0.66666667,  3.33333333],
+    >>> #        [ 2.6       ,  2.8       , -0.4       ]])
     >>> atol_vectoriser(a)
-    array([1.18168665, 0.42375966])
+    >>> # array([1.18168665, 0.42375966]) # doctest: +SKIP
     >>> atol_vectoriser(c)
-    array([0.02062512, 1.25157463])
-    >>> atol_vectoriser.transform(X=[a, b, c])
-    array([[1.18168665, 0.42375966],
-           [0.29861028, 1.06330156],
-           [0.02062512, 1.25157463]])
+    >>> # array([0.02062512, 1.25157463]) # doctest: +SKIP
+    >>> atol_vectoriser.transform(X=[a, b, c]) # doctest: +SKIP
+    >>> # array([[1.18168665, 0.42375966],
+    >>> #        [0.29861028, 1.06330156],
+    >>> #        [0.02062512, 1.25157463]])
     """
+    # Note the example above must be up to date with the one in tests called test_atol_doc
     def __init__(self, quantiser, weighting_method="cloud", contrast="gaussian"):
         """
         Constructor for the Atol measure vectorisation class.
