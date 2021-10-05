@@ -34,16 +34,21 @@ make -j 4 all && ctest -j 4 --output-on-failure
 ## Create the documentation
 ```bash
 mkdir gudhi.doc.@GUDHI_VERSION@
+```
+
+***[Check there are no error and the warnings]***
+
+```bash
+cd gudhi.@GUDHI_VERSION@
+rm -rf build; mkdir build; cd build
+cmake -DCMAKE_BUILD_TYPE=Release -DCGAL_DIR=/your/path/to/CGAL -DWITH_GUDHI_EXAMPLE=ON -DPython_ADDITIONAL_VERSIONS=3 ..
 make doxygen  2>&1 | tee dox.log && grep warning dox.log
 ```
 
 ***[Check there are no error and the warnings]***
 
 ```bash
-cp -R gudhi.@GUDHI_VERSION@/doc/html gudhi.doc.@GUDHI_VERSION@/cpp
-cd gudhi.@GUDHI_VERSION@
-rm -rf build; mkdir build; cd build
-cmake -DCMAKE_BUILD_TYPE=Release -DCGAL_DIR=/your/path/to/CGAL -DWITH_GUDHI_EXAMPLE=ON -DPython_ADDITIONAL_VERSIONS=3 ..
+cp -R html ../../gudhi.doc.@GUDHI_VERSION@/cpp
 export LC_ALL=en_US.UTF-8  # cf. bug https://github.com/GUDHI/gudhi-devel/issues/111
 make sphinx
 ```
@@ -90,7 +95,8 @@ ln -s @GUDHI_VERSION@ latest
 
 ## Pip package
 
-The pip package construction shall be started on release creation, you just have to check [gudhi github actions](https://github.com/GUDHI/gudhi-devel/actions) results.
+The pip package construction shall be started on release creation, you just have to check
+[gudhi github actions](https://github.com/GUDHI/gudhi-devel/actions) results.
 The version number must be conform to [pep440](https://www.python.org/dev/peps/pep-0440/#pre-releases)
 
 ## Conda package
@@ -105,30 +111,22 @@ If you need to update conda tools (conda-build, conda-smithy, ...), add a commen
 
 ## Docker image
 
-You have to modify the `Dockerfile_gudhi_installation` at the root of this repository in order to use the last release, cf. lines:
+You have to modify the
+[Dockerfile_gudhi_installation](https://github.com/GUDHI/gudhi-deploy/blob/main/Dockerfile_for_gudhi_installation)
+in gudhi-deploy repository in order to use the last release, cf. lines:
 ```
 ...
-RUN curl -LO "https://github.com/GUDHI/gudhi-devel/releases/download/tags%2Fgudhi-release-@GUDHI_VERSION@/gudhi.@GUDHI_VERSION@.tar.gz" \
-&& tar xf gudhi.@GUDHI_VERSION@.tar.gz \
-&& cd gudhi.@GUDHI_VERSION@ \
+ARG GUDHI_VERSION="3.X.X"
 ...
 ```
 
-Build and push images to docker hub:
-```
-docker build -f Dockerfile_gudhi_installation -t gudhi/latest_gudhi_version:@GUDHI_VERSION@ .
-docker run --rm -it gudhi/latest_gudhi_version:@GUDHI_VERSION@ 
-```
+After pushing the changes the docker image build will be automatically performed for
+[latest_gudhi_version](https://hub.docker.com/repository/docker/gudhi/latest_gudhi_version)
+docker image on docker hub.
 
-***[Check there are no error with utils and python version]***
-
-```
-docker tag gudhi/latest_gudhi_version:@GUDHI_VERSION@ gudhi/latest_gudhi_version:latest
-docker push gudhi/latest_gudhi_version:latest
-docker push gudhi/latest_gudhi_version:@GUDHI_VERSION@
-```
+***[Check there are no error]***
 
 ## Mail sending
 Send version mail to the following lists :
-* gudhi-devel@lists.gforge.inria.fr
-* gudhi-users@lists.gforge.inria.fr (not for release candidate)
+* gudhi-devel@inria.fr
+* gudhi-users@inria.fr (not for release candidate)
