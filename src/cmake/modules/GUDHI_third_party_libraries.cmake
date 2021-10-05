@@ -106,8 +106,8 @@ function( find_python_module PYTHON_MODULE_NAME )
           OUTPUT_VARIABLE PYTHON_MODULE_VERSION
           ERROR_VARIABLE PYTHON_MODULE_ERROR)
   if(PYTHON_MODULE_RESULT EQUAL 0)
-    # Remove carriage return
-    string(STRIP ${PYTHON_MODULE_VERSION} PYTHON_MODULE_VERSION)
+    # Remove all carriage returns as it can be multiline
+    string(REGEX REPLACE "\n" " " PYTHON_MODULE_VERSION "${PYTHON_MODULE_VERSION}")
     message ("++ Python module ${PYTHON_MODULE_NAME} - Version ${PYTHON_MODULE_VERSION} found")
 
     set(${PYTHON_MODULE_NAME_UP}_VERSION ${PYTHON_MODULE_VERSION} PARENT_SCOPE)
@@ -155,6 +155,9 @@ if( PYTHONINTERP_FOUND )
   find_python_module("pykeops")
   find_python_module("eagerpy")
   find_python_module_no_version("hnswlib")
+  find_python_module("tensorflow")
+  find_python_module("sphinx_paramlinks")
+  find_python_module_no_version("python_docs_theme")
 endif()
 
 if(NOT GUDHI_PYTHON_PATH)
