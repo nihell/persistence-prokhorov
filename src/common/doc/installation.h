@@ -5,7 +5,7 @@
  * Examples of GUDHI headers inclusion can be found in \ref utilities.
  * 
  * \section compiling Compiling
- * The library uses c++14 and requires <a target="_blank" href="http://www.boost.org/">Boost</a>  &ge; 1.56.0
+ * The library uses c++14 and requires <a target="_blank" href="http://www.boost.org/">Boost</a>  &ge; 1.66.0
  * and <a target="_blank" href="https://www.cmake.org/">CMake</a> &ge; 3.5.
  * It is a multi-platform library and compiles on Linux, Mac OSX and Visual Studio 2015.
  * 
@@ -126,6 +126,8 @@ make \endverbatim
  * Alpha_complex/Weighted_alpha_complex_3d_from_points.cpp</a>
  * \li <a href="alpha_complex_3d_persistence_8cpp-example.html">
  * Alpha_complex/alpha_complex_3d_persistence.cpp</a>
+ * \li <a href="_coxeter_triangulation_2manifold_tracing_flat_torus_with_boundary_8cpp-example.html">
+ * Coxeter_triangulation/manifold_tracing_flat_torus_with_boundary.cpp</a>
  *
  * \subsection eigen Eigen
  * Some GUDHI modules (cf. \ref main_page "modules list"), and few examples require
@@ -170,6 +172,12 @@ make \endverbatim
  * Witness_complex/example_witness_complex_off.cpp</a>
  * \li <a href="example_witness_complex_sphere_8cpp-example.html">
  * Witness_complex/example_witness_complex_sphere.cpp</a>
+ * \li <a href="_coxeter_triangulation_2cell_complex_from_basic_circle_manifold_8cpp-example.html">
+ * Coxeter_triangulation/cell_complex_from_basic_circle_manifold.cpp</a>
+ * \li <a href="_coxeter_triangulation_2manifold_tracing_custom_function_8cpp-example.html">
+ * Coxeter_triangulation/manifold_tracing_custom_function.cpp</a>
+ * \li <a href="_coxeter_triangulation_2manifold_tracing_flat_torus_with_boundary_8cpp-example.html">
+ * Coxeter_triangulation/manifold_tracing_flat_torus_with_boundary.cpp</a>
  *
  * \subsection tbb Threading Building Blocks
  * <a target="_blank" href="https://www.threadingbuildingblocks.org/">Intel&reg; TBB</a> lets you easily write parallel
