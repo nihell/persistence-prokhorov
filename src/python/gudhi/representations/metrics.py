@@ -172,6 +172,13 @@ def pairwise_persistence_diagram_distances(X, Y=None, metric="bottleneck", n_job
         except ImportError:
             print("Gudhi built without CGAL")
             raise
+    elif metric == "Prokhorov":
+        try:
+            from .. import prokhorov_distance
+            return _pairwise(pairwise_distances, True, XX, YY, metric=_sklearn_wrapper(prokhorov_distance,  X, Y, **kwargs), n_jobs=n_jobs)
+        except ImportError:
+            print("Prokhorov metric could not be imported. Is CGAL installed?")
+            raise
     elif metric == "pot_wasserstein":
         try:
             from gudhi.wasserstein import wasserstein_distance as pot_wasserstein_distance
@@ -294,6 +301,67 @@ class BottleneckDistance(BaseEstimator, TransformerMixin):
         try: 
             from .. import bottleneck_distance
             return bottleneck_distance(diag1, diag2, e=self.epsilon)
+        except ImportError:
+            print("Gudhi built without CGAL")
+            raise
+            
+class ProkhorovDistance(BaseEstimator, TransformerMixin):
+    """
+    This is a class for computing the Prokhorov distance matrix from a list of persistence diagrams.
+
+    :Requires: `CGAL <installation.html#cgal>`_ :math:`\geq` 4.11.0
+    """
+    def __init__(self, epsilon=None, n_jobs=None, coefs = None):
+        """
+        Constructor for the BottleneckDistance class.
+
+        Parameters:
+            epsilon (double): absolute (additive) error tolerated on the distance (default is the smallest positive float), see :func:`gudhi.bottleneck_distance`.
+            n_jobs (int): number of jobs to use for the computation. See :func:`pairwise_persistence_diagram_distances` for details.
+            coefs (1D numpy array): coefficients of the Prokhorov metric.
+        """
+        self.epsilon = epsilon
+        self.n_jobs = n_jobs
+        self.coefs = coefs
+
+    def fit(self, X, y=None):
+        """
+        Fit the ProkhorovDistance class on a list of persistence diagrams: persistence diagrams are stored in a numpy array called **diagrams**.
+
+        Parameters:
+            X (list of n x 2 numpy arrays): input persistence diagrams.
+            y (n x 1 array): persistence diagram labels (unused).
+        """
+        self.diagrams_ = X
+        return self
+
+    def transform(self, X):
+        """
+        Compute all Prokhorov distances between the persistence diagrams that were stored after calling the fit() method, and a given list of (possibly different) persistence diagrams.
+
+        Parameters:
+            X (list of n x 2 numpy arrays): input persistence diagrams.
+
+        Returns:
+            numpy array of shape (number of diagrams in **diagrams**) x (number of diagrams in X): matrix of pairwise bottleneck distances.
+        """
+        Xfit = pairwise_persistence_diagram_distances(X, self.diagrams_, metric="Prokhorov", n_jobs=self.n_jobs, coefs=self.coefs)
+        return Xfit
+
+    def __call__(self, diag1, diag2):
+        """
+        Apply ProkhorovDistance on a single pair of persistence diagrams and outputs the result.
+
+        Parameters:
+            diag1 (n x 2 numpy array): first input persistence diagram.
+            diag2 (n x 2 numpy array): second input persistence diagram.
+
+        Returns:
+            float: bottleneck distance.
+        """
+        try: 
+            from .. import prokhorov_distance
+            return prokhorov_distance(diag1, diag2, coefs = self.coefs)
         except ImportError:
             print("Gudhi built without CGAL")
             raise

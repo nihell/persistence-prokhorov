@@ -10,8 +10,8 @@
  *      - YYYY/MM Author: Description of the modification
  */
 
-#ifndef PROKHOROV_H_
-#define PROKHOROV_H_
+#ifndef BOTTLENECKPROFILE_H_
+#define BOTTLENECKPROFILE_H_
 
 #include <gudhi/Graph_matching.h>
 
@@ -33,34 +33,6 @@ namespace Gudhi {
 
 namespace persistence_diagram {
 
-
-
-inline double prokhorov_distance_exact(Persistence_graph& g, std::vector<double> coefs) {
-  std::vector<double> sd = g.sorted_distances();
-  long lower_bound_i = 0;
-  long upper_bound_i = sd.size() - 1;
-  const double alpha = std::pow(g.size(), 1. / 5.);
-  Graph_matching m(g);
-  Graph_matching biggest_unperfect(g);
-  while (lower_bound_i != upper_bound_i) {
-    long step = lower_bound_i + static_cast<long> ((upper_bound_i - lower_bound_i - 1) / alpha);
-    m.set_r(sd.at(step));
-    while (m.multi_augment()) {}  // compute a maximum matching (in the graph corresponding to the current r)
-    double fr = 0;
-    for (ssize_t i = 0; i< coefs.size(); i++){
-    	fr += coefs[i]*std::pow(sd.at(step),i);
-    }
-    if (m.number_unmatched()<=fr) {
-      m = biggest_unperfect;
-      upper_bound_i = step;
-    } else {
-      biggest_unperfect = m;
-      lower_bound_i = step + 1;
-    }
-  }
-  return sd.at(lower_bound_i);
-}
-
 inline double bottleneck_profile_exact(Persistence_graph& g, double t){
 	Graph_matching m(g);
 	Graph_matching biggest_unperfect(g);
@@ -69,27 +41,17 @@ inline double bottleneck_profile_exact(Persistence_graph& g, double t){
 	return m.number_unmatched();
 }
 
-
-template<typename Persistence_diagram1, typename Persistence_diagram2>
-double prokhorov_distance(const Persistence_diagram1 &diag1, const Persistence_diagram2 &diag2,
-                           std::vector<double> coefs) {
-  Persistence_graph g(diag1, diag2, (std::numeric_limits<double>::min)());
-  if (g.bottleneck_alive() == std::numeric_limits<double>::infinity())
-    return std::numeric_limits<double>::infinity();
-  return (std::max)(g.bottleneck_alive(), prokhorov_distance_exact(g,coefs));
-}
-
 template<typename Persistence_diagram1, typename Persistence_diagram2>
 double bottleneck_profile(const Persistence_diagram1 &diag1, const Persistence_diagram2 &diag2,
                            double t) {
   Persistence_graph g(diag1, diag2, (std::numeric_limits<double>::min)());
   if (g.bottleneck_alive() == std::numeric_limits<double>::infinity())
     return std::numeric_limits<double>::infinity();
-  return (std::max)(g.bottleneck_alive(), bottleneck_profile_exact(g,t));
+  return bottleneck_profile_exact(g,t);
 }
 
 }  // namespace persistence_diagram
 
 }  // namespace Gudhi
 
-#endif  // PROKHOROV_H_
+#endif  // BOTTLENECKPROFILE_H_

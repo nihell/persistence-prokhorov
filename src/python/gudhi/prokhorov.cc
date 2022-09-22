@@ -1,4 +1,6 @@
-#include <gudhi/Bottleneck.h>
+//#include <gudhi/Bottleneck.h>
+#include <gudhi/Prokhorov.h>
+
 
 #include <pybind11/numpy.h>
 
@@ -22,11 +24,12 @@ double prokhorov(Dgm d1, Dgm d2, py::array_t<double> coefs)
   return Gudhi::persistence_diagram::prokhorov_distance(diag1, diag2, coef_vector);
 }
 
+
 PYBIND11_MODULE(prokhorov, m) {
       m.attr("__license__") = "GPL v3";
       m.def("prokhorov_distance", &prokhorov,
           py::arg("diagram_1"), py::arg("diagram_2"),
-          py::arg("coef"),
+          py::arg("coefs")=py::none(),
           R"pbdoc(
     Compute the Prokhorov distance between two diagrams.
     Points at infinity and on the diagonal are supported.
@@ -41,3 +44,4 @@ PYBIND11_MODULE(prokhorov, m) {
     :returns: the Prokhorov distance.
     )pbdoc");
 }
+

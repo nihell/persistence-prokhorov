@@ -8,10 +8,10 @@
  *      - YYYY/MM Author: Description of the modification
  */
 
-#ifndef INCLUDE_PROKHOROV_DISTANCE_INTERFACE_H_
-#define INCLUDE_PROKHOROV_DISTANCE_INTERFACE_H_
+#ifndef INCLUDE_BOTTLENECK_PROFILE_INTERFACE_H_
+#define INCLUDE_BOTTLENECK_PROFILE_INTERFACE_H_
 
-#include <gudhi/Prokhorov.h>
+#include <gudhi/Bottleneck_profile.h>
 
 #include <iostream>
 #include <vector>
@@ -21,12 +21,7 @@ namespace Gudhi {
 
 namespace persistence_diagram {
 
-  // prokhorov_distance function renamed for the python function can be called prokhorov_distance  
-  double prokhorov(const std::vector<std::pair<double, double>>& diag1,
-                    const std::vector<std::pair<double, double>>& diag2,
-                     const std::vector<double>& coefs) {
-    return prokhorov_distance(diag1, diag2, coefs);
-  }
+  // bottleneck_profile function renamed for the python function can be called bottleneck_profile  
   
   double bottleneck_prof(const std::vector<std::pair<double, double>>& diag1,
                     const std::vector<std::pair<double, double>>& diag2,
@@ -39,4 +34,4 @@ namespace persistence_diagram {
 }  // namespace Gudhi
 
 
-#endif  // INCLUDE_PROKHOROV_DISTANCE_INTERFACE_H_
+#endif  // INCLUDE_BOTTLENECK_PROFILE_INTERFACE_H_
